@@ -8,8 +8,8 @@
 </head>
 <body class="bg-gradient-to-r from-teal-100 to-cyan-100 text-gray-800 font-sans min-h-screen">
     <div class="container mx-auto py-12 px-6">
-        <div class="bg-white text-gray-800 shadow-xl rounded-3xl p-8 max-w-xl mx-auto">
-            <h1 class="text-3xl font-extrabold text-center mb-6 text-teal-600">Fitness Toolbox</h1>
+        <div class="bg-white text-gray-800 shadow-2xl rounded-3xl p-8 max-w-xl mx-auto">
+            <h1 class="text-3xl font-extrabold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500">Fitness Toolbox</h1>
 
             <form id="data-form" class="space-y-6">
                 <div>
@@ -66,22 +66,35 @@
                 </div>
 
                 <div class="flex space-x-4">
-                    <button type="button" id="calculate" class="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg">Berechnen</button>
+                    <button type="button" id="calculate" class="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg">Berechnen</button>
                     <button type="reset" id="reset" class="w-full bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400">Zurücksetzen</button>
                 </div>
             </form>
 
             <div id="results" class="mt-10 hidden">
-                <h2 class="text-2xl font-bold mb-4 text-teal-600">Deine Ergebnisse</h2>
+                <h2 class="text-2xl font-bold mb-4 text-teal-500">Deine Ergebnisse</h2>
                 <p id="bmi-result" class="mb-2"></p>
                 <p id="bmi-info" class="text-sm text-gray-600 mb-4"></p>
+                <p id="bmi-explanation" class="text-xs text-gray-500 mb-6 hidden">Der BMI wird berechnet durch: Gewicht (kg) ÷ (Größe (m) × Größe (m)).</p>
+                
                 <p id="bodyfat-result" class="mb-2"></p>
                 <p id="bodyfat-info" class="text-sm text-gray-600 mb-4"></p>
+                <p id="bodyfat-explanation" class="text-xs text-gray-500 mb-6 hidden">Die Körperfettberechnung basiert auf der Formel: (1.20 × BMI) + (0.23 × Alter) − (16.2 für Männer / 5.4 für Frauen).</p>
+
                 <p id="calories-result" class="mb-2"></p>
+                <p id="calories-explanation" class="text-xs text-gray-500 mb-6 hidden">Der Grundumsatz (BMR) wird mit der Harris-Benedict-Formel berechnet: Männer: 10 × Gewicht (kg) + 6.25 × Größe (cm) − 5 × Alter + 5. Frauen: 10 × Gewicht (kg) + 6.25 × Größe (cm) − 5 × Alter − 161.</p>
+
                 <p id="total-calories-result" class="mb-2"></p>
+                <p id="total-calories-explanation" class="text-xs text-gray-500 mb-6 hidden">Der Gesamtkalorienbedarf ergibt sich durch Multiplikation des Grundumsatzes (BMR) mit dem Aktivitätslevel.</p>
+
                 <p id="water-intake-result" class="mb-2"></p>
+
                 <p id="macros-result" class="mb-2"></p>
+                <p id="macros-explanation" class="text-xs text-gray-500 mb-6 hidden">Makronährstoffe werden wie folgt berechnet: Eiweiß: 1.6 g pro kg Körpergewicht, Fette: 25% des Kalorienbedarfs, Kohlenhydrate: Rest der Kalorien.</p>
+
                 <p id="creatine-result" class="mb-2"></p>
+                <p id="creatine-explanation" class="text-xs text-gray-500 mb-6 hidden">Kreatinbedarf: 0.03 g pro kg Körpergewicht.</p>
+
                 <p id="protein-result" class="mb-2"></p>
             </div>
         </div>
@@ -161,13 +174,26 @@
 
             document.getElementById('bmi-result').textContent = `Dein BMI: ${bmi}`;
             document.getElementById('bmi-info').textContent = bmiInfo;
+            document.getElementById('bmi-explanation').classList.remove('hidden');
+
             document.getElementById('bodyfat-result').textContent = `Körperfettanteil: ${bodyFat}%`;
             document.getElementById('bodyfat-info').textContent = bodyFatInfo;
+            document.getElementById('bodyfat-explanation').classList.remove('hidden');
+
             document.getElementById('calories-result').textContent = `Kalorien Grundverbrauch (BMR): ${bmr} kcal`;
+            document.getElementById('calories-explanation').classList.remove('hidden');
+
             document.getElementById('total-calories-result').textContent = `Gesamtkalorienbedarf: ${adjustedCalories} kcal`;
+            document.getElementById('total-calories-explanation').classList.remove('hidden');
+
             document.getElementById('water-intake-result').textContent = `Täglicher Wasserbedarf: ${waterIntake} Liter`;
+
             document.getElementById('macros-result').textContent = `Makronährstoffe (Ziel: ${goal === 'deficit' ? 'Fettabbau' : goal === 'surplus' ? 'Muskelaufbau' : 'Erhaltung'}): Kohlenhydrate: ${carbs}g, Eiweiß: ${protein}g, Fette: ${fats}g`;
+            document.getElementById('macros-explanation').classList.remove('hidden');
+
             document.getElementById('creatine-result').textContent = `Kreatinbedarf: ${creatine} g pro Tag`;
+            document.getElementById('creatine-explanation').classList.remove('hidden');
+
             document.getElementById('protein-result').textContent = `Eiweißbedarf: ${protein} g pro Tag`;
 
             document.getElementById('results').classList.remove('hidden');
