@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Toolbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-teal-100 to-cyan-100 text-gray-800 font-sans min-h-screen">
+    <div class="container mx-auto py-12 px-6">
+        <div class="bg-white text-gray-800 shadow-xl rounded-3xl p-8 max-w-xl mx-auto">
+            <h1 class="text-3xl font-extrabold text-center mb-6 text-teal-600">Deine Fitness Toolbox</h1>
+
+            <form id="data-form" class="space-y-6">
+                <div>
+                    <label for="gender" class="block font-medium">Dein Geschlecht</label>
+                    <select id="gender" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300">
+                        <option value="male">Männlich</option>
+                        <option value="female">Weiblich</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="weight" class="block font-medium">Dein Gewicht (kg)</label>
+                    <input type="number" id="weight" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300" required>
+                </div>
+
+                <div>
+                    <label for="height" class="block font-medium">Deine Größe (cm)</label>
+                    <input type="number" id="height" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300" required>
+                </div>
+
+                <div>
+                    <label for="waist" class="block font-medium">Dein Taillenumfang (cm) <span class="text-sm text-gray-500">(Miss auf Höhe des Bauchnabels)</span></label>
+                    <input type="number" id="waist" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300">
+                </div>
+
+                <div>
+                    <label for="hip" class="block font-medium">Dein Hüftumfang (cm)</label>
+                    <input type="number" id="hip" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300">
+                </div>
+
+                <div>
+                    <label for="age" class="block font-medium">Dein Alter</label>
+                    <input type="number" id="age" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300" required>
+                </div>
+
+                <div>
+                    <label for="activity" class="block font-medium">Dein Aktivitätslevel</label>
+                    <select id="activity" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300">
+                        <option value="1.2">Sitzend (kaum Bewegung)</option>
+                        <option value="1.375">Leicht aktiv (leichte Bewegung)</option>
+                        <option value="1.55">Moderat aktiv (mäßige Bewegung)</option>
+                        <option value="1.725">Sehr aktiv (intensives Training)</option>
+                        <option value="1.9">Extrem aktiv (körperlich anstrengender Beruf)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="goal" class="block font-medium">Dein Fitnessziel</label>
+                    <select id="goal" class="w-full border-gray-300 rounded-lg shadow-md focus:ring focus:ring-teal-300">
+                        <option value="deficit">Fettabbau</option>
+                        <option value="maintenance">Gewicht halten</option>
+                        <option value="surplus">Muskelaufbau</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-4">
+                    <button type="button" id="calculate" class="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg">Berechnen</button>
+                    <button type="reset" id="reset" class="w-full bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-400">Zurücksetzen</button>
+                </div>
+            </form>
+
+            <div id="results" class="mt-10 hidden">
+                <h2 class="text-2xl font-bold mb-4 text-teal-600">Deine Ergebnisse</h2>
+                <p id="bmi-result" class="mb-2"></p>
+                <p id="bmi-info" class="text-sm text-gray-600 mb-4"></p>
+                <p id="bodyfat-result" class="mb-2"></p>
+                <p id="bodyfat-info" class="text-sm text-gray-600 mb-4"></p>
+                <p id="calories-result" class="mb-2"></p>
+                <p id="total-calories-result" class="mb-2"></p>
+                <p id="water-intake-result" class="mb-2"></p>
+                <p id="macros-result" class="mb-2"></p>
+                <p id="creatine-result" class="mb-2"></p>
+                <p id="protein-result" class="mb-2"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculate').addEventListener('click', () => {
+            const gender = document.getElementById('gender').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const waist = parseFloat(document.getElementById('waist').value || 0);
+            const hip = parseFloat(document.getElementById('hip').value || 0);
+            const age = parseInt(document.getElementById('age').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+
+            const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+            let bmiInfo;
+            if (bmi < 18.5) {
+                bmiInfo = 'Dein BMI ist untergewichtig.';
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                bmiInfo = 'Dein BMI liegt im Normalbereich.';
+            } else if (bmi >= 25 && bmi < 29.9) {
+                bmiInfo = 'Dein BMI liegt im Übergewicht-Bereich.';
+            } else {
+                bmiInfo = 'Dein BMI ist stark übergewichtig.';
+            }
+
+            let bodyFat;
+            if (gender === 'male') {
+                bodyFat = ((1.20 * bmi) + (0.23 * age) - 16.2).toFixed(2);
+            } else {
+                bodyFat = ((1.20 * bmi) + (0.23 * age) - 5.4).toFixed(2);
+            }
+
+            let bodyFatInfo;
+            if (gender === 'male') {
+                if (bodyFat < 6) {
+                    bodyFatInfo = 'Dein Körperfettanteil ist sehr niedrig.';
+                } else if (bodyFat >= 6 && bodyFat <= 24) {
+                    bodyFatInfo = 'Dein Körperfettanteil liegt im gesunden Bereich.';
+                } else {
+                    bodyFatInfo = 'Dein Körperfettanteil ist erhöht.';
+                }
+            } else {
+                if (bodyFat < 14) {
+                    bodyFatInfo = 'Dein Körperfettanteil ist sehr niedrig.';
+                } else if (bodyFat >= 14 && bodyFat <= 31) {
+                    bodyFatInfo = 'Dein Körperfettanteil liegt im gesunden Bereich.';
+                } else {
+                    bodyFatInfo = 'Dein Körperfettanteil ist erhöht.';
+                }
+            }
+
+            const bmr = gender === 'male'
+                ? (10 * weight + 6.25 * height - 5 * age + 5).toFixed(2)
+                : (10 * weight + 6.25 * height - 5 * age - 161).toFixed(2);
+
+            const totalCalories = (bmr * activity).toFixed(2);
+
+            let adjustedCalories;
+            if (goal === 'deficit') {
+                adjustedCalories = (totalCalories - 500).toFixed(2);
+            } else if (goal === 'surplus') {
+                adjustedCalories = (parseFloat(totalCalories) + 500).toFixed(2);
+            } else {
+                adjustedCalories = totalCalories;
+            }
+
+            const waterIntake = (weight * 0.033).toFixed(2);
+
+            const protein = (weight * 1.6).toFixed(2);
+            const fats = (adjustedCalories * 0.25 / 9).toFixed(2);
+            const carbs = ((adjustedCalories - (protein * 4) - (fats * 9)) / 4).toFixed(2);
+
+            const creatine = (weight * 0.03).toFixed(2);
+
+            document.getElementById('bmi-result').textContent = `Dein BMI: ${bmi}`;
+            document.getElementById('bmi-info').textContent = bmiInfo;
+            document.getElementById('bodyfat-result').textContent = `Körperfettanteil: ${bodyFat}%`;
+            document.getElementById('bodyfat-info').textContent = bodyFatInfo;
+            document.getElementById('calories-result').textContent = `Kalorien Grundverbrauch (BMR): ${bmr} kcal`;
+            document.getElementById('total-calories-result').textContent = `Gesamtkalorienbedarf: ${adjustedCalories} kcal`;
+            document.getElementById('water-intake-result').textContent = `Täglicher Wasserbedarf: ${waterIntake} Liter`;
+            document.getElementById('macros-result').textContent = `Makronährstoffe (Ziel: ${goal === 'deficit' ? 'Fettabbau' : goal === 'surplus' ? 'Muskelaufbau' : 'Erhaltung'}): Kohlenhydrate: ${carbs}g, Eiweiß: ${protein}g, Fette: ${fats}g`;
+            document.getElementById('creatine-result').textContent = `Kreatinbedarf: ${creatine} g pro Tag`;
+            document.getElementById('protein-result').textContent = `Eiweißbedarf: ${protein} g pro Tag`;
+
+            document.getElementById('results').classList.remove('hidden');
+        });
+
+        document.getElementById('reset').addEventListener('click', () => {
+            document.getElementById('results').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
